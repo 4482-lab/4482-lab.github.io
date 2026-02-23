@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>ㄱ → 7 변환기</title>
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 420px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 14px;
+    resize: none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5563d1;
+}
+
+.result-box {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #f5f5f5;
+    min-height: 50px;
+    word-break: break-all;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ㄱ → 7 변환기</h1>
+    <textarea id="inputText" placeholder="텍스트 입력"></textarea>
+    <button onclick="convertText()">변환하기</button>
+    <button onclick="copyText()">결과 복사</button>
+    <div class="result-box" id="result"></div>
+</div>
+
+<script>
+
+const CHO = ["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ",
+             "ㅆ","ㅇ","ㅈ","ㅉ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
+const JUNG = ["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ",
+              "ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
+
+const JONG = ["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ",
+              "ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ",
+              "ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
+
+function convertText() {
+    const input = document.getElementById("inputText").value;
+    let result = "";
+
+    for (let char of input) {
+
+        // 단독 ㄱ
+        if (char === "ㄱ") {
+            result += "7";
+            continue;
+        }
+
+        const code = char.charCodeAt(0);
+
+        // 완성형 한글인지 확인
+        if (code >= 44032 && code <= 55203) {
+
+            const base = code - 44032;
+            const choIndex = Math.floor(base / 588);
+            const jungIndex = Math.floor((base % 588) / 28);
+            const jongIndex = base % 28;
+
+            let cho = CHO[choIndex];
+            const jung = JUNG[jungIndex];
+            let jong = JONG[jongIndex];
+
+            let changed = false;
+
+            if (cho === "ㄱ") {
+                cho = "7";
+                changed = true;
+            }
+
+            if (jong === "ㄱ") {
+                jong = "7";
+                changed = true;
+            }
+
+            if (changed) {
+                result += cho + jung + jong;
+            } else {
+                result += char;
+            }
+
+        } else {
+            result += char;
+        }
+    }
+
+    document.getElementById("result").innerText = result;
+}
+
+function copyText() {
+    const text = document.getElementById("result").innerText;
+    navigator.clipboard.writeText(text);
+    alert("복사 완료!");
+}
+
+</script>
+
+</body>
+</html>
